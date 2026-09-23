@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="IndustryMachineManagementSystem/IndustryMachineManagementSystem.Client/IndustryMachineManagementSystem.Client.csproj" />
+  <Project Path="IndustryMachineManagementSystem/IndustryMachineManagementSystem/IndustryMachineManagementSystem.csproj" />
+</Solution>

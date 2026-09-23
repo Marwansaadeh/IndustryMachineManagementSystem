@@ -1,0 +1,190 @@
+﻿<div class="statistics-card">
+
+    <!-- Header -->
+    <div class="statistics-header">
+
+        <div>
+            <h2>Statistics</h2>
+
+            <p>
+                Machine performance overview
+            </p>
+        </div>
+
+        <button class="period-button">
+            This week
+            <i class="bi bi-chevron-down"></i>
+        </button>
+
+    </div>
+
+
+    <!-- Summary -->
+    <div class="statistics-summary">
+
+        <div class="summary-item">
+            <span class="summary-label">Total Machines</span>
+            <strong>12</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-label">Running</span>
+            <strong class="green">9</strong>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-label">Offline</span>
+            <strong class="red">3</strong>
+        </div>
+
+    </div>
+
+
+    <!-- Yellow Chart -->
+    <div class="chart-section">
+
+        <div class="chart-header">
+
+            <div>
+                <h3>Machine Activity</h3>
+
+                <span>
+                    Operating hours
+                </span>
+            </div>
+
+            <strong class="chart-value">
+                84%
+            </strong>
+
+        </div>
+
+
+        <div class="chart">
+
+            <!-- Y axis -->
+            <div class="chart-y-axis">
+                <span>100</span>
+                <span>75</span>
+                <span>50</span>
+                <span>25</span>
+                <span>0</span>
+            </div>
+
+
+            <!-- Chart area -->
+            <div class="chart-area">
+
+                <!-- Grid -->
+                <div class="grid-line line-100"></div>
+                <div class="grid-line line-75"></div>
+                <div class="grid-line line-50"></div>
+                <div class="grid-line line-25"></div>
+                <div class="grid-line line-0"></div>
+
+
+                <!-- Yellow line -->
+                <svg class="chart-svg"
+                     viewBox="0 0 600 220"
+                     preserveAspectRatio="none">
+
+                    <defs>
+
+                        <linearGradient id="yellowGradient"
+                                        x1="0"
+                                        y1="0"
+                                        x2="0"
+                                        y2="1">
+
+                            <stop offset="0%"
+                                  stop-color="#f2c94c"
+                                  stop-opacity="0.30" />
+
+                            <stop offset="100%"
+                                  stop-color="#f2c94c"
+                                  stop-opacity="0" />
+
+                        </linearGradient>
+
+                    </defs>
+
+
+                    <!-- Area -->
+                    <path class="chart-area-fill"
+                          d="M0,160
+                    C50,145 70,125 110,135
+                    C150,145 165,95 210,110
+                    C250,125 275,75 315,90
+                    C350,105 380,55 420,70
+                    C460,85 485,45 525,60
+                    C555,70 580,40 600,50
+                    L600,220
+                    L0,220 Z" />
+
+
+                    <!-- Line -->
+                    <path class="chart-line"
+                          d="M0,160
+                    C50,145 70,125 110,135
+                    C150,145 165,95 210,110
+                    C250,125 275,75 315,90
+                    C350,105 380,55 420,70
+                    C460,85 485,45 525,60
+                    C555,70 580,40 600,50" />
+
+
+                    <!-- Current point -->
+                    <circle class="chart-point"
+                            cx="600"
+                            cy="50"
+                            r="5" />
+
+                </svg>
+
+
+                <!-- X axis -->
+                <div class="chart-x-axis">
+
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Bottom information -->
+    <div class="statistics-footer">
+
+        <div>
+            <span class="footer-label">
+                Average uptime
+            </span>
+
+            <strong>
+                84.6%
+            </strong>
+        </div>
+
+        <div>
+            <span class="footer-label">
+                Maintenance
+            </span>
+
+            <strong>
+                2 machines
+            </strong>
+        </div>
+
+    </div>
+
+</div>
