@@ -1,4 +1,5 @@
 using IndustryMachineManagementSystem.Client.Pages;
+using IndustryMachineManagementSystem.Client.Services;
 using IndustryMachineManagementSystem.Components;
 
 namespace IndustryMachineManagementSystem
@@ -12,6 +13,8 @@ namespace IndustryMachineManagementSystem
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
+
+            builder.Services.AddScoped<IMachineService, MachineService>();
 
             var app = builder.Build();
 

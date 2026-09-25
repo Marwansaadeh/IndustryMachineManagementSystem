@@ -15,7 +15,7 @@
         </div>
 
         <button class="add-machine-button"
-                @onclick="AddMachine">
+                @onclick="Actions.CreateMachineAsync.InvokeAsync">
 
             <i class="bi bi-plus-lg"></i>
 
@@ -52,99 +52,7 @@
 
                 @foreach (var machine in Machines)
                 {
-                    <tr>
-
-                        <!-- Machine -->
-                        <td>
-
-                            <div class="machine-name">
-                                @machine.Name
-                            </div>
-
-                            <div class="machine-id">
-                                ID: @machine.Id
-                            </div>
-
-                        </td>
-
-
-                        <!-- Status -->
-                        <td>
-
-                            @if (machine.IsOnline)
-                            {
-                                <span class="machine-status online">
-
-                                    <span class="status-dot"></span>
-
-                                    Online
-
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="machine-status offline">
-
-                                    <span class="status-dot"></span>
-
-                                    Offline
-
-                                </span>
-                            }
-
-                        </td>
-
-
-                        <!-- Last Data -->
-                        <td>
-
-                            <span class="last-data">
-                                @machine.LastData
-                            </span>
-
-                        </td>
-
-
-                        <!-- Updated -->
-                        <td>
-
-                            <span class="last-updated">
-
-                                @machine.LastUpdated.ToString("yyyy-MM-dd")
-
-                                <br />
-
-                                @machine.LastUpdated.ToString("HH:mm")
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- Actions -->
-                        <td>
-
-                            <div class="machine-actions">
-
-                                <button class="start-button"
-                                        @onclick="() => StartMachine(machine)">
-
-                                    Start
-
-                                </button>
-
-                                <button class="action-button delete-button"
-                                        @onclick="() => DeleteMachine(machine)">
-
-                                    <i class="bi bi-trash"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
+                    <MachineItem Machine="@machine" Actions="@Actions" />
                 }
 
             </tbody>
@@ -157,44 +65,11 @@
 
 
 @code {
-    async Task AddMachine()
-    {
-        // Logic to add a new machine
-        var newMachine = new Machine
-        {
-            Id = Guid.NewGuid(),
-            Name = $"Machine {Machines.Count + 1}",
-            IsOnline = false,
-            LastData = "No data",
-            LastUpdated = DateTime.Now
-        };
-        Machines.Add(newMachine);
-    }
-    async Task StartMachine(Machine machine)
-    {
-        // Logic to start the machine
-        machine.IsOnline = true;
-        machine.LastData = "Machine started";
-        machine.LastUpdated = DateTime.Now;
-    }
-    async Task DeleteMachine(Machine machine)
-    {
-        // Logic to delete the machine
-        Machines.Remove(machine);
-    }
-    List<Machine> Machines = new List<Machine>
-    {
-        new Machine { Id = Guid.NewGuid(), Name = "Machine 1", IsOnline = true, LastData = "Data 1", LastUpdated = DateTime.Now.AddMinutes(-10) },
-        new Machine { Id = Guid.NewGuid(), Name = "Machine 2", IsOnline = false, LastData = "Data 2", LastUpdated = DateTime.Now.AddMinutes(-20) },
-        new Machine { Id = Guid.NewGuid(), Name = "Machine 3", IsOnline = true, LastData = "Data 3", LastUpdated = DateTime.Now.AddMinutes(-30) }
-    };
-    public class Machine
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public bool IsOnline { get; set; }
-        public string LastData { get; set; }
-        public DateTime LastUpdated { get; set; }
-    }
+    
 
+    [Parameter]
+    public IReadOnlyList<Machine> Machines { get; set; } = [];
+    [CascadingParameter]
+    public MachineActions Actions { get; set; } = null!;
+    
 }

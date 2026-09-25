@@ -1,3 +1,4 @@
+using IndustryMachineManagementSystem.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace IndustryMachineManagementSystem.Client
@@ -7,6 +8,7 @@ namespace IndustryMachineManagementSystem.Client
         static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.Services.AddScoped<IMachineService, MachineService>();
 
             await builder.Build().RunAsync();
         }

@@ -1,0 +1,101 @@
+﻿<tr>
+
+    <!-- Machine -->
+    <td>
+
+        <div class="machine-name">
+            @Machine.Name
+        </div>
+
+        <div class="machine-id">
+            ID: @Machine.Id
+        </div>
+
+    </td>
+
+
+    <!-- Status -->
+    <td>
+
+        @if (Machine.IsOnline)
+        {
+            <span class="machine-status online">
+
+                <span class="status-dot"></span>
+
+                Online
+
+            </span>
+        }
+        else
+        {
+            <span class="machine-status offline">
+
+                <span class="status-dot"></span>
+
+                Offline
+
+            </span>
+        }
+
+    </td>
+
+
+    <!-- Last Data -->
+    <td>
+
+        <span class="last-data">
+            @Machine.LastData
+        </span>
+
+    </td>
+
+
+    <!-- Updated -->
+    <td>
+
+        <span class="last-updated">
+
+            @Machine.LastUpdated.ToString("yyyy-MM-dd")
+
+            <br />
+
+            @Machine.LastUpdated.ToString("HH:mm")
+
+        </span>
+
+    </td>
+
+
+    <!-- Actions -->
+    <td>
+
+        <div class="machine-actions">
+
+            <button class="start-button"
+                    @onclick="() => Actions.StartMachineAsync.InvokeAsync(Machine.Id)">
+
+                Start
+
+            </button>
+
+            <button class="action-button delete-button"
+                    @onclick="() => Actions.DeleteMachineAsync.InvokeAsync(Machine.Id)">
+
+                <i class="bi bi-trash"></i>
+
+            </button>
+
+        </div>
+
+    </td>
+
+</tr>
+
+
+@code {
+    [Parameter]
+    public Machine Machine { get; init; } = null!;
+    [Parameter]
+    public MachineActions Actions { get; set; } = null!;
+}

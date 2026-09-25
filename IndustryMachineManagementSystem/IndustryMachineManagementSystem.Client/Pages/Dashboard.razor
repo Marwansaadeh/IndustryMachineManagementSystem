@@ -25,10 +25,83 @@
 
         <div class="machines-section">
 
-            <MachineList />
+            <CascadingValue Value="_actions"> 
+                <MachineList Machines="_machines" />
+            </CascadingValue>
 
         </div>
 
     </div>
 
 </div>
+@code {
+
+    private List<Machine> _machines = null!;
+
+    private MachineActions _actions = null!;
+
+
+    [Inject]
+    public IMachineService MachineService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _machines = await MachineService.GetMachinesAsync();
+
+        _actions = new MachineActions
+        {
+            CreateMachineAsync = EventCallback.Factory.Create<Machine>(
+            this, CreateMachineAsync),
+
+            DeleteMachineAsync = EventCallback.Factory.Create<Guid>(
+            this, DeleteMachineAsync),
+
+            StartMachineAsync = EventCallback.Factory.Create<Guid>(
+            this, StartMachineAsync),
+
+            StopMachineAsync = EventCallback.Factory.Create<Guid>(
+            this, StopMachineAsync),
+
+            UpdateMachineAsync = EventCallback.Factory.Create<Machine>(
+            this, UpdateMachineAsync)
+        };
+    }
+
+    public async Task CreateMachineAsync(Machine machine)
+    {
+        await MachineService.CreateMachineAsync(machine);
+        
+    }
+
+    public async Task DeleteMachineAsync(Guid id)
+    {
+       await MachineService.DeleteMachineAsync(id);
+    }
+
+    public async Task<Machine> GetMachineByIdAsync(Guid id)
+    {
+        return await MachineService.GetMachineByIdAsync(id);
+    }
+
+    public async Task<List<Machine>> GetMachinesAsync()
+    {
+        return await MachineService.GetMachinesAsync();
+    }
+
+    public async Task StartMachineAsync(Guid id)
+    {
+        await MachineService.StartMachineAsync(id);
+    }
+
+    public async Task StopMachineAsync(Guid id)
+    {
+        await MachineService.StopMachineAsync(id);
+    }
+
+    public async Task UpdateMachineAsync(Machine machine)
+    {
+        await MachineService.UpdateMachineAsync(machine);
+    }
+   
+  
+}
