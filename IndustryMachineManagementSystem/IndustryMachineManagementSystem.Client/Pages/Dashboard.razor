@@ -36,21 +36,21 @@
 </div>
 @code {
 
-    private List<Machine> _machines = null!;
+    private List<MachineDto> _machines = null!;
 
     private MachineActions _actions = null!;
 
 
     [Inject]
-    public IMachineService MachineService { get; set; } = null!;
+    public IHttpMachineService HttpClientFactory { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        _machines = await MachineService.GetMachinesAsync();
+        _machines = await HttpClientFactory.GetMachinesAsync();
 
         _actions = new MachineActions
         {
-            CreateMachineAsync = EventCallback.Factory.Create<Machine>(
+            CreateMachineAsync = EventCallback.Factory.Create<CreateMachineDto>(
             this, CreateMachineAsync),
 
             DeleteMachineAsync = EventCallback.Factory.Create<Guid>(
@@ -62,45 +62,45 @@
             StopMachineAsync = EventCallback.Factory.Create<Guid>(
             this, StopMachineAsync),
 
-            UpdateMachineAsync = EventCallback.Factory.Create<Machine>(
+            UpdateMachineAsync = EventCallback.Factory.Create<UpdateMachineDto>(
             this, UpdateMachineAsync)
         };
     }
 
-    public async Task CreateMachineAsync(Machine machine)
+    public async Task CreateMachineAsync(CreateMachineDto machine)
     {
-        await MachineService.CreateMachineAsync(machine);
+        await HttpClientFactory.CreateMachineAsync(machine);
         
     }
 
     public async Task DeleteMachineAsync(Guid id)
     {
-       await MachineService.DeleteMachineAsync(id);
+       await HttpClientFactory.DeleteMachineAsync(id);
     }
 
-    public async Task<Machine> GetMachineByIdAsync(Guid id)
+    public async Task<MachineDto> GetMachineByIdAsync(Guid id)
     {
-        return await MachineService.GetMachineByIdAsync(id);
+        return await HttpClientFactory.GetMachineByIdAsync(id);
     }
 
-    public async Task<List<Machine>> GetMachinesAsync()
+    public async Task<List<MachineDto>> GetMachinesAsync()
     {
-        return await MachineService.GetMachinesAsync();
+        return await HttpClientFactory.GetMachinesAsync();
     }
 
     public async Task StartMachineAsync(Guid id)
     {
-        await MachineService.StartMachineAsync(id);
+        await HttpClientFactory.StartMachineAsync(id);
     }
 
     public async Task StopMachineAsync(Guid id)
     {
-        await MachineService.StopMachineAsync(id);
+        await HttpClientFactory.StopMachineAsync(id);
     }
 
-    public async Task UpdateMachineAsync(Machine machine)
+    public async Task UpdateMachineAsync(UpdateMachineDto machine)
     {
-        await MachineService.UpdateMachineAsync(machine);
+        await HttpClientFactory.UpdateMachineAsync(machine);
     }
    
   

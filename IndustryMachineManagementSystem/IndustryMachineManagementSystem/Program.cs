@@ -1,6 +1,9 @@
 using IndustryMachineManagementSystem.Client.Pages;
 using IndustryMachineManagementSystem.Client.Services;
 using IndustryMachineManagementSystem.Components;
+using IndustryMachineManagementSystem.Extensions;
+using IndustryMachineManagementSystem.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace IndustryMachineManagementSystem
 {
@@ -13,8 +16,14 @@ namespace IndustryMachineManagementSystem
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.");
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddServiceLayer();
+            builder.Services.AddRepositories();
+            builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 
-            builder.Services.AddScoped<IMachineService, MachineService>();
+            builder.Services.AddControllers();
+            builder.Services.AddScoped<IHttpMachineService, HttpMachineService>();
 
             var app = builder.Build();
 
@@ -39,7 +48,7 @@ namespace IndustryMachineManagementSystem
             app.MapRazorComponents<App>()
                 .AddInteractiveWebAssemblyRenderMode()
                 .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
-
+            app.MapControllers();
             app.Run();
         }
     }

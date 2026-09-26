@@ -1,0 +1,28 @@
+﻿using IndustryMachineManagementSystem.Contracts;
+using IndustryMachineManagementSystem.Infrastructure.Data;
+using IndustryMachineManagementSystem.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace IndustryMachineManagementSystem.Infrastructure.Repository
+{
+    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
+    {
+        private readonly ApplicationDbContext _context;
+        protected DbSet<T> DbSet { get; }
+        public RepositoryBase(ApplicationDbContext context)
+        {
+            _context = context;
+            DbSet = context.Set<T>();
+        }
+
+        protected IQueryable<T> FindAll(bool trackChanges = false) =>
+                          DbSet.WithTracking(trackChanges);
+
+        protected IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges = false) =>
+                         DbSet.WithTracking(trackChanges).Where(expression);
+
+        public void Create(T entity) => _context.Add(entity);
+        public void Delete(T entity) => _context.Remove(entity);
+    }
+}

@@ -1,26 +1,26 @@
-﻿using IndustryMachineManagementSystem.Client.Models;
+﻿using IndustryMachineManagementSystem.Client.Dtos;
 
 namespace IndustryMachineManagementSystem.Client.Services
 {
-    public class MachineService : IMachineService
+    public class HttpMachineService : IHttpMachineService
     {
-        private readonly List<Machine> _machines;
-        public MachineService()
+        private readonly List<MachineDto> _machines;
+        public HttpMachineService()
         {
             _machines = GetInitialMachines();
         }
-        public Task<Machine> CreateMachineAsync(Machine machine)
+        public Task<MachineDto> CreateMachineAsync(CreateMachineDto machine)
         {
-            if(machine == null)
+            MachineDto machineDto = new MachineDto();
+
+            if (machine == null)
             {
-                machine = new Machine();
-                machine?.Id = Guid.NewGuid();
-                machine?.LastData = "No data";
-                machine?.IsOnline = false;
-                machine?.Name = string.IsNullOrWhiteSpace(machine.Name) ? $"Machine {_machines.Count + 1}" : machine.Name;
+                machineDto?.LastData = "No data";
+                machineDto?.IsOnline = false;
+                machineDto?.Name = string.IsNullOrWhiteSpace(machine.Name) ? $"Machine {_machines.Count + 1}" : machine.Name;
             }
-            _machines.Add(machine!);
-            return Task.FromResult(machine!);
+            _machines.Add(machineDto!);
+            return Task.FromResult(machineDto!);
         }
 
         public Task DeleteMachineAsync(Guid id)
@@ -32,13 +32,13 @@ namespace IndustryMachineManagementSystem.Client.Services
             return Task.CompletedTask;
         }
 
-        public Task<Machine> GetMachineByIdAsync(Guid id)
+        public Task<MachineDto> GetMachineByIdAsync(Guid id)
         {
             var machine = _machines.FirstOrDefault(m => m.Id == id);
             return Task.FromResult(machine)!;
         }
 
-        public Task<List<Machine>> GetMachinesAsync()
+        public Task<List<MachineDto>> GetMachinesAsync()
         {
             return Task.FromResult(_machines);
         }
@@ -65,7 +65,7 @@ namespace IndustryMachineManagementSystem.Client.Services
             return Task.CompletedTask;
         }
 
-        public Task UpdateMachineAsync(Machine machine)
+        public Task UpdateMachineAsync(UpdateMachineDto machine)
         {
             var existingMachine = _machines.FirstOrDefault(m => m.Id == machine.Id);
             if (existingMachine != null)
@@ -78,12 +78,12 @@ namespace IndustryMachineManagementSystem.Client.Services
             return Task.CompletedTask;
         }
 
-        private List<Machine> GetInitialMachines()
+        private List<MachineDto> GetInitialMachines()
         {
-            return new List<Machine>
+            return new List<MachineDto>
             {
 
-    new Machine
+    new MachineDto
     {
         Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
         Name = "Machine 1",
@@ -91,7 +91,7 @@ namespace IndustryMachineManagementSystem.Client.Services
         LastData = "Temperature: 23.4°C",
         LastUpdated = DateTime.Now.AddMinutes(-2)
     },
-    new Machine
+    new MachineDto
     {
         Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
         Name = "Machine 2",
@@ -99,7 +99,7 @@ namespace IndustryMachineManagementSystem.Client.Services
         LastData = "Temperature: 21.8°C",
         LastUpdated = DateTime.Now.AddMinutes(-5)
     },
-    new Machine
+    new MachineDto
     {
         Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
         Name = "Machine 3",
@@ -107,7 +107,7 @@ namespace IndustryMachineManagementSystem.Client.Services
         LastData = "No data",
         LastUpdated = DateTime.Now.AddHours(-2)
     },
-    new Machine
+    new MachineDto
     {
         Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
         Name = "Machine 4",
@@ -115,55 +115,6 @@ namespace IndustryMachineManagementSystem.Client.Services
         LastData = "Temperature: 25.1°C",
         LastUpdated = DateTime.Now.AddMinutes(-1)
     },
-    new Machine
-    {
-        Id = Guid.Parse("55555555-5555-5555-5555-555555555555"),
-        Name = "Machine 5",
-        IsOnline = false,
-        LastData = "No data",
-        LastUpdated = DateTime.Now.AddHours(-5)
-    },
-    new Machine
-    {
-        Id = Guid.Parse("66666666-6666-6666-6666-666666666666"),
-        Name = "Machine 6",
-        IsOnline = true,
-        LastData = "Temperature: 22.6°C",
-        LastUpdated = DateTime.Now.AddMinutes(-10)
-    },
-    new Machine
-    {
-        Id = Guid.Parse("77777777-7777-7777-7777-777777777777"),
-        Name = "Machine 7",
-        IsOnline = true,
-        LastData = "Temperature: 24.3°C",
-        LastUpdated = DateTime.Now.AddMinutes(-3)
-    },
-    new Machine
-    {
-        Id = Guid.Parse("88888888-8888-8888-8888-888888888888"),
-        Name = "Machine 8",
-        IsOnline = false,
-        LastData = "No data",
-        LastUpdated = DateTime.Now.AddHours(-1)
-    },
-    new Machine
-    {
-        Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
-        Name = "Machine 9",
-        IsOnline = true,
-        LastData = "Temperature: 20.9°C",
-        LastUpdated = DateTime.Now.AddMinutes(-7)
-    },
-    new Machine
-    {
-        Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-        Name = "Machine 10",
-        IsOnline = true,
-        LastData = "Temperature: 26.2°C",
-        LastUpdated = DateTime.Now.AddMinutes(-4)
-    }
-
 
             };
         }
