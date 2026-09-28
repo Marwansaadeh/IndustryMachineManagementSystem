@@ -14,15 +14,15 @@ namespace IndustryMachineManagementSystem.Infrastructure.Repository
             _context = context;
         }
 
-        public Task<Machine?> GetMachineAsync(Guid id, bool trackChanges = false)
+        public async Task<Machine?> GetMachineAsync(Guid id, bool trackChanges = false)
         {
-            return GetMachineAsync(id, trackChanges);
+            return await GetMachineQuary(id, trackChanges);
         }
         public Task<IQueryable<Machine>> GetMachinesAsync(bool trackChanges = false)
         {
             return GetMachineQuary(trackChanges);
         }
-        public async Task<Machine> GetMachine(Guid id, bool trackChanges = false)
+        public async Task<Machine> GetMachineQuary(Guid id, bool trackChanges = false)
         {
             var machine = await _context.Machines.FirstAsync(m => m.Id == id);
             if (machine == null)

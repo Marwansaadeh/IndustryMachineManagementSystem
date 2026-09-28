@@ -1,15 +1,17 @@
 ﻿using IndustryMachineManagementSystem.Client.Dtos;
+using System.Net.Http.Json;
+using System.Reflection.PortableExecutable;
 
 namespace IndustryMachineManagementSystem.Client.Services
 {
     public class HttpMachineService : IHttpMachineService
     {
-        private readonly List<MachineDto> _machines;
-        public HttpMachineService()
+        private readonly HttpClient _httpClient;
+        public HttpMachineService(HttpClient httpClient)
         {
-            _machines = GetInitialMachines();
+            _httpClient = httpClient;
         }
-        public Task<MachineDto> CreateMachineAsync(CreateMachineDto machine)
+        public async Task<MachineDto> CreateMachineAsync(CreateMachineDto machine)
         {
             MachineDto machineDto = new MachineDto();
 
@@ -17,106 +19,79 @@ namespace IndustryMachineManagementSystem.Client.Services
             {
                 machineDto?.LastData = "No data";
                 machineDto?.IsOnline = false;
-                machineDto?.Name = string.IsNullOrWhiteSpace(machine.Name) ? $"Machine {_machines.Count + 1}" : machine.Name;
+                machineDto?.Name = string.IsNullOrWhiteSpace(machineDto.Name) ? $"Machine {"mock"}" : machineDto.Name;
             }
-            _machines.Add(machineDto!);
-            return Task.FromResult(machineDto!);
+            var response = await _httpClient.PostAsync("/api/machines", JsonContent.Create(machineDto));
+
+            return await response.Content.ReadFromJsonAsync<MachineDto>() ?? machineDto!;
         }
 
-        public Task DeleteMachineAsync(Guid id)
+        public async Task<bool> DeleteMachineAsync(Guid id)
         {
-            if (_machines.Any(m => m.Id == id))
+            var machine = await _httpClient.GetFromJsonAsync<MachineDto>($"/api/machines/{id}");
+
+            if (machine != null)
             {
-                _machines.RemoveAll(m => m.Id == id);
+                var response = await _httpClient.DeleteAsync($"/api/machines/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
             }
-            return Task.CompletedTask;
+            return false;
         }
 
-        public Task<MachineDto> GetMachineByIdAsync(Guid id)
+        public async Task<MachineDto> GetMachineByIdAsync(Guid id)
         {
-            var machine = _machines.FirstOrDefault(m => m.Id == id);
-            return Task.FromResult(machine)!;
+            var machine = await _httpClient.GetFromJsonAsync<MachineDto>($"/api/machines/{id}");
+
+            return machine!;
         }
 
-        public Task<List<MachineDto>> GetMachinesAsync()
+        public async Task<List<MachineDto>> GetMachinesAsync()
         {
-            return Task.FromResult(_machines);
+            var machines = await _httpClient.GetFromJsonAsync<List<MachineDto>>("/api/machines")
+              ?? new List<MachineDto>();
+            return machines;
         }
 
-        public Task StartMachineAsync(Guid id)
+        public async Task StartMachineAsync(Guid id)
         {
-            if (_machines.Any(m => m.Id == id))
+            var machinedto = await GetMachineByIdAsync(id);
+            if (machinedto != null)
             {
-                var machine = _machines.First(m => m.Id == id);
-                machine.IsOnline = true;
-                machine.LastUpdated = DateTime.Now;
+                machinedto.IsOnline = true;
+                machinedto.LastUpdated = DateTime.Now;
+                await _httpClient.PutAsync($"/api/machines/{id}", JsonContent.Create(machinedto));
+                
             }
-            return Task.CompletedTask;
         }
 
-        public Task StopMachineAsync(Guid id)
+        public async Task StopMachineAsync(Guid id)
         {
-            if (_machines.Any(m => m.Id == id))
+            var machinedto = await GetMachineByIdAsync(id);
+            if (machinedto != null)
             {
-                var machine = _machines.First(m => m.Id == id);
-                machine.IsOnline = false;
-                machine.LastUpdated = DateTime.Now;
+                machinedto.IsOnline = false;
+                machinedto.LastUpdated = DateTime.Now;
+                await _httpClient.PutAsync($"/api/machines/{id}", JsonContent.Create(machinedto));
+
             }
-            return Task.CompletedTask;
         }
 
-        public Task UpdateMachineAsync(UpdateMachineDto machine)
+        public async Task UpdateMachineAsync(UpdateMachineDto machine)
         {
-            var existingMachine = _machines.FirstOrDefault(m => m.Id == machine.Id);
-            if (existingMachine != null)
+                var machinedto = await GetMachineByIdAsync(machine.Id);
+                if (machinedto != null)
             {
-                existingMachine.Name = machine.Name;
-                existingMachine.IsOnline = machine.IsOnline;
-                existingMachine.LastData = machine.LastData;
-                existingMachine.LastUpdated = DateTime.Now;
+                machinedto.Name = machine.Name;
+                machinedto.IsOnline = machine.IsOnline;
+                machinedto.LastData = machine.LastData;
+                machinedto.LastUpdated = DateTime.Now;
+                await _httpClient.PutAsync($"/api/machines/{machine.Id}", JsonContent.Create(machinedto));
+
             }
-            return Task.CompletedTask;
         }
 
-        private List<MachineDto> GetInitialMachines()
-        {
-            return new List<MachineDto>
-            {
-
-    new MachineDto
-    {
-        Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-        Name = "Machine 1",
-        IsOnline = true,
-        LastData = "Temperature: 23.4°C",
-        LastUpdated = DateTime.Now.AddMinutes(-2)
-    },
-    new MachineDto
-    {
-        Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-        Name = "Machine 2",
-        IsOnline = true,
-        LastData = "Temperature: 21.8°C",
-        LastUpdated = DateTime.Now.AddMinutes(-5)
-    },
-    new MachineDto
-    {
-        Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-        Name = "Machine 3",
-        IsOnline = false,
-        LastData = "No data",
-        LastUpdated = DateTime.Now.AddHours(-2)
-    },
-    new MachineDto
-    {
-        Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
-        Name = "Machine 4",
-        IsOnline = true,
-        LastData = "Temperature: 25.1°C",
-        LastUpdated = DateTime.Now.AddMinutes(-1)
-    },
-
-            };
-        }
     }
 }

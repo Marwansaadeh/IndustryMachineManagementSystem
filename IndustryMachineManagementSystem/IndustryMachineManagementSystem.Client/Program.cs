@@ -8,8 +8,13 @@ namespace IndustryMachineManagementSystem.Client
         static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.Services.AddScoped(sp => new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7205")
+            });
             builder.Services.AddScoped<IHttpMachineService, HttpMachineService>();
 
+           
             await builder.Build().RunAsync();
         }
     }

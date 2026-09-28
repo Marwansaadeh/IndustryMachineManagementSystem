@@ -24,11 +24,17 @@
         </div>
 
         <div class="machines-section">
-
-            <CascadingValue Value="_actions"> 
-                <MachineList Machines="_machines" />
-            </CascadingValue>
-
+            @if (_loading)
+            {
+                <p>Loading machines...</p>
+            }
+            else
+            {
+                <CascadingValue Value="_actions">
+                    <MachineList Machines="_machines" />
+                </CascadingValue>
+            }
+            
         </div>
 
     </div>
@@ -39,6 +45,7 @@
     private List<MachineDto> _machines = null!;
 
     private MachineActions _actions = null!;
+    private bool _loading = true;
 
 
     [Inject]
@@ -46,7 +53,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _machines = await HttpClientFactory.GetMachinesAsync();
 
         _actions = new MachineActions
         {
@@ -65,17 +71,39 @@
             UpdateMachineAsync = EventCallback.Factory.Create<UpdateMachineDto>(
             this, UpdateMachineAsync)
         };
+        _loading = true;
+
+        try
+        {
+            _machines = await HttpClientFactory.GetMachinesAsync();
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
     public async Task CreateMachineAsync(CreateMachineDto machine)
     {
-        await HttpClientFactory.CreateMachineAsync(machine);
-        
+        var createdMachine = await HttpClientFactory.CreateMachineAsync(machine);
+        _machines.Add(createdMachine);
+
     }
 
     public async Task DeleteMachineAsync(Guid id)
     {
-       await HttpClientFactory.DeleteMachineAsync(id);
+        var deletedMachine = await HttpClientFactory.DeleteMachineAsync(id);
+        if (deletedMachine)
+        {
+            try
+            {
+                _machines = await HttpClientFactory.GetMachinesAsync();
+            }
+            finally
+            {
+                _loading = false;
+            }
+        }
     }
 
     public async Task<MachineDto> GetMachineByIdAsync(Guid id)
@@ -91,16 +119,40 @@
     public async Task StartMachineAsync(Guid id)
     {
         await HttpClientFactory.StartMachineAsync(id);
+        try
+        {
+            _machines = await HttpClientFactory.GetMachinesAsync();
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
     public async Task StopMachineAsync(Guid id)
     {
         await HttpClientFactory.StopMachineAsync(id);
+        try
+        {
+            _machines = await HttpClientFactory.GetMachinesAsync();
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
     public async Task UpdateMachineAsync(UpdateMachineDto machine)
     {
         await HttpClientFactory.UpdateMachineAsync(machine);
+        try
+        {
+            _machines = await HttpClientFactory.GetMachinesAsync();
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
    
   

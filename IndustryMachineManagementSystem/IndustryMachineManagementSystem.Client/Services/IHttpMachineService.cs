@@ -7,7 +7,7 @@ namespace IndustryMachineManagementSystem.Client.Services
         Task<MachineDto> GetMachineByIdAsync(Guid id);
         Task<MachineDto> CreateMachineAsync(CreateMachineDto machine);
         Task UpdateMachineAsync(UpdateMachineDto machine);
-        Task DeleteMachineAsync(Guid id);
+        Task<bool> DeleteMachineAsync(Guid id);
         Task StartMachineAsync(Guid id);
         Task StopMachineAsync(Guid id);
 
