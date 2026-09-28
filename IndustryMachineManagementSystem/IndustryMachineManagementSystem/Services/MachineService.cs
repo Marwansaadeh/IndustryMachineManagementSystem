@@ -20,8 +20,8 @@ namespace IndustryMachineManagementSystem.Services
 
         public async Task<IEnumerable<MachineDto>> GetMachinesAsync(bool trackChanges = false)
         {
-            IEnumerable<Machine> pagedList = await _uow.MachineRepsoitory.GetMachinesAsync(trackChanges);
-            var MachinesDtos = _mapper.Map<IEnumerable<MachineDto>>(pagedList);
+            IEnumerable<Machine> machines = await _uow.MachineRepsoitory.GetMachinesAsync(trackChanges);
+            var MachinesDtos = _mapper.Map<IEnumerable<MachineDto>>(machines);
 
             return MachinesDtos;
 

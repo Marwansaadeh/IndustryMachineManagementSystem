@@ -3,6 +3,7 @@ using IndustryMachineManagementSystem.Client.Services;
 using IndustryMachineManagementSystem.Components;
 using IndustryMachineManagementSystem.Extensions;
 using IndustryMachineManagementSystem.Infrastructure.Data;
+using IndustryMachineManagementSystem.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace IndustryMachineManagementSystem
@@ -18,6 +19,7 @@ namespace IndustryMachineManagementSystem
                 .AddInteractiveWebAssemblyComponents();
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddHostedService<DataSeedService>();
             builder.Services.AddServiceLayer();
             builder.Services.AddRepositories();
             builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
