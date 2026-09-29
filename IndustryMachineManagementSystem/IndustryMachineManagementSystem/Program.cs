@@ -22,12 +22,8 @@ namespace IndustryMachineManagementSystem
             builder.Services.AddServiceLayer();
             builder.Services.AddRepositories();
             builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
-            builder.Services.AddScoped<IHttpMachineService, HttpMachineService>();
+           
 
-            builder.Services.AddScoped(sp => new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7205")
-            });
             builder.Services.AddControllers();
 
 

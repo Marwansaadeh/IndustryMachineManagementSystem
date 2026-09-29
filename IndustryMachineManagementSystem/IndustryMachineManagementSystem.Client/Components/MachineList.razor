@@ -71,5 +71,14 @@
     public IReadOnlyList<MachineDto> Machines { get; set; } = [];
     [CascadingParameter]
     public MachineActions Actions { get; set; } = null!;
+    protected override void OnInitialized()
+{
+    Console.WriteLine("MACHINE LIST INIT");
+}
+
+protected override void OnParametersSet()
+{
+    Console.WriteLine("MACHINE LIST PARAMETERS");
+}
     
 }

@@ -9,6 +9,6 @@ namespace IndustryMachineManagementSystem.Client
         public EventCallback<Guid> DeleteMachineAsync { get; init; }
         public EventCallback<Guid> StartMachineAsync { get; init; }
         public EventCallback<Guid> StopMachineAsync { get; init; }
-        public EventCallback<UpdateMachineDto> UpdateMachineAsync { get; init; }
+        public EventCallback<UpdateMachineRequest> UpdateMachineAsync { get; init; }
     }
 }

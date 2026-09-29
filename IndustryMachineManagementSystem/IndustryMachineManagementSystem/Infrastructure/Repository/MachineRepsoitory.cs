@@ -18,9 +18,9 @@ namespace IndustryMachineManagementSystem.Infrastructure.Repository
         {
             return await GetMachineQuary(id, trackChanges);
         }
-        public Task<IQueryable<Machine>> GetMachinesAsync(bool trackChanges = false)
+        public async Task<List<Machine>> GetMachinesAsync(bool trackChanges = false)
         {
-            return GetMachineQuary(trackChanges);
+            return await GetAllMachinesByQuary(trackChanges);
         }
         public async Task<Machine> GetMachineQuary(Guid id, bool trackChanges = false)
         {
@@ -31,9 +31,9 @@ namespace IndustryMachineManagementSystem.Infrastructure.Repository
             }
             return machine;
         }
-        private async Task<IQueryable<Machine>> GetMachineQuary(bool trackChanges = false)
+        private async Task<List<Machine>> GetAllMachinesByQuary(bool trackChanges = false)
         {
-            return FindAll(trackChanges);
+            return await FindAll(trackChanges).ToListAsync();
         }
     }
 }

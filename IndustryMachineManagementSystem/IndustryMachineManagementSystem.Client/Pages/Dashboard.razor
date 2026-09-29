@@ -1,6 +1,5 @@
 ﻿@page "/"
 @page "/dashboard"
-
 <PageTitle>Machine Dashboard</PageTitle>
 
 <div class="dashboard-page">
@@ -18,12 +17,11 @@
 
     <div class="dashboard-grid">
         <div class="statistics-section">
-
             <StatistikPanel />
-
         </div>
 
         <div class="machines-section">
+
             @if (_loading)
             {
                 <p>Loading machines...</p>
@@ -34,7 +32,7 @@
                     <MachineList Machines="_machines" />
                 </CascadingValue>
             }
-            
+
         </div>
 
     </div>
@@ -53,6 +51,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("DASHBOARD INIT");
+
 
         _actions = new MachineActions
         {
@@ -68,7 +68,7 @@
             StopMachineAsync = EventCallback.Factory.Create<Guid>(
             this, StopMachineAsync),
 
-            UpdateMachineAsync = EventCallback.Factory.Create<UpdateMachineDto>(
+            UpdateMachineAsync = EventCallback.Factory.Create<UpdateMachineRequest>(
             this, UpdateMachineAsync)
         };
         _loading = true;
@@ -87,21 +87,19 @@
     {
         var createdMachine = await HttpClientFactory.CreateMachineAsync(machine);
         _machines.Add(createdMachine);
-
     }
 
     public async Task DeleteMachineAsync(Guid id)
     {
-        var deletedMachine = await HttpClientFactory.DeleteMachineAsync(id);
-        if (deletedMachine)
+        var deleted = await HttpClientFactory.DeleteMachineAsync(id);
+
+        if (deleted)
         {
-            try
+            var machine = _machines.FirstOrDefault(x => x.Id == id);
+
+            if (machine is not null)
             {
-                _machines = await HttpClientFactory.GetMachinesAsync();
-            }
-            finally
-            {
-                _loading = false;
+                _machines.Remove(machine);
             }
         }
     }
@@ -111,47 +109,43 @@
         return await HttpClientFactory.GetMachineByIdAsync(id);
     }
 
-    public async Task<List<MachineDto>> GetMachinesAsync()
+    
+
+    public async Task<MachineDto> StartMachineAsync(Guid id)
     {
-        return await HttpClientFactory.GetMachinesAsync();
+        var updatedMachine = await HttpClientFactory.StartMachineAsync(id);
+
+        var index = _machines.FindIndex(x => x.Id == id);
+
+        if (index >= 0)
+        {
+            _machines[index] = updatedMachine;
+        }
+
+        return updatedMachine;
+        
     }
 
-    public async Task StartMachineAsync(Guid id)
+    public async Task<MachineDto> StopMachineAsync(Guid id)
     {
-        await HttpClientFactory.StartMachineAsync(id);
-        try
+        var updatedMachine = await HttpClientFactory.StopMachineAsync(id);
+        var index = _machines.FindIndex(x => x.Id == id);
+        if (index >= 0)
         {
-            _machines = await HttpClientFactory.GetMachinesAsync();
+            _machines[index] = updatedMachine;
         }
-        finally
-        {
-            _loading = false;
-        }
+        return updatedMachine;
     }
 
-    public async Task StopMachineAsync(Guid id)
+    public async Task UpdateMachineAsync(UpdateMachineRequest request)
     {
-        await HttpClientFactory.StopMachineAsync(id);
-        try
-        {
-            _machines = await HttpClientFactory.GetMachinesAsync();
-        }
-        finally
-        {
-            _loading = false;
-        }
-    }
+        var updatedMachine = await HttpClientFactory.UpdateMachineAsync(request.Machine, request.Id);
 
-    public async Task UpdateMachineAsync(UpdateMachineDto machine)
-    {
-        await HttpClientFactory.UpdateMachineAsync(machine);
-        try
+        var index = _machines.FindIndex(x => x.Id == request.Id);
+
+        if (index >= 0)
         {
-            _machines = await HttpClientFactory.GetMachinesAsync();
-        }
-        finally
-        {
-            _loading = false;
+            _machines[index] = updatedMachine;
         }
     }
 }

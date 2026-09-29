@@ -55,7 +55,7 @@ namespace IndustryMachineManagementSystem.Client.Services
             return machines;
         }
 
-        public async Task StartMachineAsync(Guid id)
+        public async Task<MachineDto> StartMachineAsync(Guid id)
         {
             var machinedto = await GetMachineByIdAsync(id);
             if (machinedto != null)
@@ -65,9 +65,10 @@ namespace IndustryMachineManagementSystem.Client.Services
                 await _httpClient.PutAsync($"/api/machines/{id}", JsonContent.Create(machinedto));
                 
             }
+            return machinedto!;
         }
 
-        public async Task StopMachineAsync(Guid id)
+        public async Task<MachineDto> StopMachineAsync(Guid id)
         {
             var machinedto = await GetMachineByIdAsync(id);
             if (machinedto != null)
@@ -77,20 +78,22 @@ namespace IndustryMachineManagementSystem.Client.Services
                 await _httpClient.PutAsync($"/api/machines/{id}", JsonContent.Create(machinedto));
 
             }
+            return machinedto!;
         }
 
-        public async Task UpdateMachineAsync(UpdateMachineDto machine)
+        public async Task<MachineDto> UpdateMachineAsync(UpdateMachineDto machine, Guid id)
         {
-                var machinedto = await GetMachineByIdAsync(machine.Id);
+                var machinedto = await GetMachineByIdAsync(id);
                 if (machinedto != null)
             {
                 machinedto.Name = machine.Name;
                 machinedto.IsOnline = machine.IsOnline;
                 machinedto.LastData = machine.LastData;
                 machinedto.LastUpdated = DateTime.Now;
-                await _httpClient.PutAsync($"/api/machines/{machine.Id}", JsonContent.Create(machinedto));
+                await _httpClient.PutAsync($"/api/machines/{id}", JsonContent.Create(machinedto));
 
             }
+            return machinedto!;
         }
 
     }
